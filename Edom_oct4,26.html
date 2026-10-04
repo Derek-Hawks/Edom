@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraCare - AI Mental Health First-Aid Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        sage: { 50: '#f4f7f4', 100: '#e3ebe3', 200: '#c7d7c7', 300: '#a3be2', 400: '#7f9f7f', 500: '#5e825e', 600: '#486848', 700: '#3a533a', 800: '#304430', 900: '#283928' },
+                        lavender: { 50: '#f7f6fd', 100: '#eeeafd', 200: '#dfd8fc', 300: '#c7b9fa', 400: '#a88ef5', 500: '#875ceb', 600: '#733dd8', 700: '#602cb8', 800: '#502597', 900: '#42207a' },
+                        dusk: { 800: '#1e1e2d', 900: '#141420', 950: '#0b0b12' }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Custom scrollbar for modern feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.3);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.5);
+        }
+        /* Glassmorphism helpers */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .dark .glass-panel {
+            background: rgba(30, 30, 45, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        /* Breathing Animation Visualizer Ring */
+        .breath-ring {
+            transition: all 4s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 via-teal-50 to-indigo-50 dark:from-dusk-950 dark:via-dusk-900 dark:to-slate-900 text-slate-800 dark:text-slate-100 min-h-full flex flex-col transition-colors duration-300">
+
+    <!-- Top Crisis Disclaimer Banner -->
+    <div class="bg-amber-500/10 dark:bg-amber-500/20 border-b border-amber-500/30 text-amber-900 dark:text-amber-200 px-4 py-2 text-xs sm:text-sm">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="flex items-center gap-2 text-center sm:text-left">
+                <i class="fa-solid font-bold fa-triangle-exclamation text-amber-600 dark:text-amber-400 text-base shrink-0"></i>
+                <span><strong>Emergency & Disclaimer:</strong> AuraCare is an AI supportive tool, NOT a therapist or medical service. If you are in immediate danger or distress:</span>
+            </div>
+            <div class="flex items-center gap-3 shrink-0 font-semibold">
+                <a href="tel:988" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-600 text-white hover:bg-amber-700 transition shadow-xs text-xs">
+                    <i class="fa-solid fa-phone"></i> Call 988
+                </a>
+                <a href="sms:741741?body=HOME" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 hover:opacity-90 transition shadow-xs text-xs">
+                    <i class="fa-solid fa-comment-sms"></i> Text HOME to 741741
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="glass-panel sticky top-0 z-30 px-4 lg:px-8 py-3 transition-colors">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-400 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-teal-500/20">
+                    <i class="fa-solid fa-heart-pulse text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-tight bg-gradient-to-r from-teal-600 to-indigo-600 dark:from-teal-400 dark:to-indigo-300 bg-clip-text text-transparent">
+                        AuraCare by Edom
+                    </h1>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">AI Mental Health First-Aid</p>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-1 bg-slate-200/50 dark:bg-slate-800/60 p-1 rounded-xl border border-slate-300/40 dark:border-slate-700/50">
+                <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-xs">
+                    <i class="fa-solid fa-comments mr-1.5 text-teal-500"></i> AI Companion
+                </button>
+                <button onclick="switchTab('toolkit')" id="nav-toolkit" class="nav-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+                    <i class="fa-solid fa-kit-medical mr-1.5 text-indigo-500"></i> First-Aid Toolkit
+                </button>
+                <button onclick="switchTab('journal')" id="nav-journal" class="nav-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+                    <i class="fa-solid fa-book-bookmark mr-1.5 text-amber-500"></i> Gratitude Journal
+                </button>
+            </nav>
+
+            <div class="flex items-center gap-2">
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition" title="Toggle Theme">
+                    <i class="fa-solid fa-moon dark:hidden"></i>
+                    <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+                </button>
+                <!-- Settings Button -->
+                <button onclick="openSettingsModal()" class="w-9 h-9 rounded-xl glass-card flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 transition" title="Personalization Settings">
+                    <i class="fa-solid fa-sliders"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Bar -->
+    <div class="md:hidden glass-panel border-b border-slate-200/50 dark:border-slate-800/50 px-4 py-2 flex justify-around text-xs font-medium">
+        <button onclick="switchTab('chat')" id="mob-nav-chat" class="flex flex-col items-center gap-1 text-teal-600 dark:text-teal-400">
+            <i class="fa-solid fa-comments text-base"></i> Companion
+        </button>
+        <button onclick="switchTab('toolkit')" id="mob-nav-toolkit" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+            <i class="fa-solid fa-kit-medical text-base"></i> Toolkit
+        </button>
+        <button onclick="switchTab('journal')" id="mob-nav-journal" class="flex flex-col items-center gap-1 text-slate-500 dark:text-slate-400">
+            <i class="fa-solid fa-book-bookmark text-base"></i> Journal
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+
+        <!-- Mood Check-in Widget Banner -->
+        <section class="glass-panel rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200/50 dark:border-slate-800/50 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-teal-400/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
+                <div>
+                    <h2 class="text-base sm:text-lg font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                        <span>Hello, <span id="user-display-name" class="text-teal-600 dark:text-teal-400">Friend</span> 👋</span>
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">How are you feeling in this moment? Select a mood for a tailored check-in:</p>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-2" id="mood-selector">
+                    <button onclick="selectMood('Anxious', '😰')" class="mood-chip px-3 py-2 rounded-2xl glass-card hover:bg-teal-500/10 dark:hover:bg-teal-500/20 hover:border-teal-400 transition-all flex items-center gap-2 text-xs sm:text-sm font-medium">
+                        <span class="text-lg">😰</span> Anxious
+                    </button>
+                    <button onclick="selectMood('Overwhelmed', '🤯')" class="mood-chip px-3 py-2 rounded-2xl glass-card hover:bg-teal-500/10 dark:hover:bg-teal-500/20 hover:border-teal-400 transition-all flex items-center gap-2 text-xs sm:text-sm font-medium">
+                        <span class="text-lg">🤯</span> Overwhelmed
+                    </button>
+                    <button onclick="selectMood('Sad', '🌧️')" class="mood-chip px-3 py-2 rounded-2xl glass-card hover:bg-teal-500/10 dark:hover:bg-teal-500/20 hover:border-teal-400 transition-all flex items-center gap-2 text-xs sm:text-sm font-medium">
+                        <span class="text-lg">🌧️</span> Sad
+                    </button>
+                    <button onclick="selectMood('Stressed', '⚡')" class="mood-chip px-3 py-2 rounded-2xl glass-card hover:bg-teal-500/10 dark:hover:bg-teal-500/20 hover:border-teal-400 transition-all flex items-center gap-2 text-xs sm:text-sm font-medium">
+                        <span class="text-lg">⚡</span> Stressed
+                    </button>
+                    <button onclick="selectMood('Calm', '🍃')" class="mood-chip px-3 py-2 rounded-2xl glass-card hover:bg-teal-500/10 dark:hover:bg-teal-500/20 hover:border-teal-400 transition-all flex items-center gap-2 text-xs sm:text-sm font-medium">
+                        <span class="text-lg">🍃</span> Calmer
+                    </button>
+                    <button onclick="selectMood('Hopeful', '✨')" class="mood-chip px-3 py-2 rounded-2xl glass-card hover:bg-teal-500/10 dark:hover:bg-teal-500/20 hover:border-teal-400 transition-all flex items-center gap-2 text-xs sm:text-sm font-medium">
+                        <span class="text-lg">✨</span> Hopeful
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW TAB 1: Chat Companion Section -->
+        <div id="tab-chat" class="tab-content flex-1 flex flex-col lg:flex-row gap-6">
+            
+            <!-- Chat Window -->
+            <section class="flex-1 glass-panel rounded-3xl p-4 sm:p-6 flex flex-col h-[580px] lg:h-[620px] shadow-sm relative overflow-hidden">
+                <!-- Chat Header -->
+                <div class="pb-3 border-b border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <div class="w-3 h-3 rounded-full bg-emerald-500 absolute top-0 right-0 border-2 border-white dark:border-dusk-900"></div>
+                            <div class="w-9 h-9 rounded-full bg-teal-500/20 dark:bg-teal-400/20 flex items-center justify-center text-teal-600 dark:text-teal-300">
+                                <i class="fa-solid fa-sparkles text-sm"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-sm text-slate-800 dark:text-slate-100">Aura AI Companion</h3>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400" id="persona-indicator">Tone: Warm & Gentle Listener</p>
+                        </div>
+                    </div>
+                    <button onclick="clearChatHistory()" class="text-xs text-slate-400 hover:text-rose-500 transition px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" title="Clear conversation">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Clear
+                    </button>
+                </div>
+
+                <!-- Chat Messages Scroll Container -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
+                    <!-- Welcome message dynamically placed via JS -->
+                </div>
+
+                <!-- Quick Suggested Prompts -->
+                <div class="pt-2 pb-2">
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+                        <span class="text-slate-400 shrink-0"><i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Suggestions:</span>
+                        <button onclick="sendQuickPrompt('I am feeling very overwhelmed right now and need help grounding.')" class="shrink-0 px-3 py-1 rounded-full bg-slate-200/60 dark:bg-slate-800/60 hover:bg-teal-500/20 hover:text-teal-700 dark:hover:text-teal-300 border border-slate-300/40 dark:border-slate-700/50 transition">
+                            🌀 Feeling Overwhelmed
+                        </button>
+                        <button onclick="sendQuickPrompt('Can you guide me through a simple breathing exercise to calm down?')" class="shrink-0 px-3 py-1 rounded-full bg-slate-200/60 dark:bg-slate-800/60 hover:bg-teal-500/20 hover:text-teal-700 dark:hover:text-teal-300 border border-slate-300/40 dark:border-slate-700/50 transition">
+                            🌬️ Breathing Guide
+                        </button>
+                        <button onclick="sendQuickPrompt('I am having trouble sleeping because my mind won\'t stop racing.')" class="shrink-0 px-3 py-1 rounded-full bg-slate-200/60 dark:bg-slate-800/60 hover:bg-teal-500/20 hover:text-teal-700 dark:hover:text-teal-300 border border-slate-300/40 dark:border-slate-700/50 transition">
+                            🌙 Can't Sleep
+                        </button>
+                        <button onclick="sendQuickPrompt('Help me reframe some negative thoughts I am having right now.')" class="shrink-0 px-3 py-1 rounded-full bg-slate-200/60 dark:bg-slate-800/60 hover:bg-teal-500/20 hover:text-teal-700 dark:hover:text-teal-300 border border-slate-300/40 dark:border-slate-700/50 transition">
+                            💡 Thought Reframing
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Input Form -->
+                <form id="chat-form" onsubmit="handleChatSubmit(event)" class="mt-1 relative flex items-center">
+                    <input type="text" id="chat-input" placeholder="Share what's on your mind... (or ask for grounding)" class="w-full pl-4 pr-12 py-3 rounded-2xl glass-card text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 border border-slate-300/50 dark:border-slate-700/60 text-slate-800 dark:text-slate-100 placeholder-slate-400">
+                    <button type="submit" id="send-btn" class="absolute right-2 w-9 h-9 rounded-xl bg-gradient-to-r from-teal-500 to-indigo-500 text-white flex items-center justify-center hover:opacity-90 active:scale-95 transition shadow-sm">
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Side Spotlight Tool Card (Quick Breathing Widget) -->
+            <section class="w-full lg:w-80 glass-panel rounded-3xl p-5 flex flex-col justify-between shadow-sm">
+                <div>
+                    <div class="flex items-center gap-2 text-teal-600 dark:text-teal-400 font-semibold text-sm mb-3">
+                        <i class="fa-solid fa-wind text-base"></i> Instant Calm: Box Breathing
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                        Regulate your nervous system with equal 4-second intervals.
+                    </p>
+
+                    <!-- Mini Box Breathing Circle Visualizer -->
+                    <div class="flex flex-col items-center justify-center py-6">
+                        <div id="side-breath-circle" class="w-28 h-28 rounded-full border-4 border-teal-400/40 bg-teal-500/10 flex flex-col items-center justify-center transition-all duration-1000 transform">
+                            <span id="side-breath-phase" class="font-bold text-sm text-teal-700 dark:text-teal-300">Inhale</span>
+                            <span id="side-breath-timer" class="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">4s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <button id="side-breath-btn" onclick="toggleBoxBreathing()" class="w-full py-2.5 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs sm:text-sm transition shadow-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play text-xs"></i> Start Breathing Rhythm
+                    </button>
+                    <button onclick="switchTab('toolkit')" class="w-full py-2.5 rounded-2xl glass-card hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-medium text-xs sm:text-sm transition flex items-center justify-center gap-2">
+                        Open Full First-Aid Kit <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- VIEW TAB 2: Interactive First-Aid Toolkit Section -->
+        <div id="tab-toolkit" class="tab-content hidden flex-1 space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Tool 1: Full Box Breathing Visualizer -->
+                <div class="glass-panel rounded-3xl p-6 flex flex-col items-center text-center shadow-sm relative overflow-hidden">
+                    <div class="w-full flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-lungs text-teal-500"></i> 4-4-4-4 Box Breathing
+                        </h3>
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 font-medium">Anxiety Relief</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 max-w-sm">
+                        Follow the expansion and contraction ring to equalize oxygen flow and lower heart rate.
+                    </p>
+
+                    <div class="relative flex items-center justify-center my-4 w-48 h-48">
+                        <div id="full-breath-ring" class="breath-ring absolute inset-0 rounded-full border-4 border-teal-400/30 bg-gradient-to-br from-teal-400/10 to-indigo-500/10 scale-75"></div>
+                        <div class="relative z-10 flex flex-col items-center">
+                            <span id="full-breath-phase" class="text-xl font-bold text-teal-700 dark:text-teal-300">Ready</span>
+                            <span id="full-breath-count" class="text-2xl font-mono font-bold text-slate-800 dark:text-slate-100 my-1">4</span>
+                            <span class="text-[11px] text-slate-400">Seconds</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex items-center gap-3 w-full max-w-xs">
+                        <button id="full-breath-btn" onclick="toggleFullBreathing()" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 text-white font-medium text-sm hover:opacity-90 transition shadow-sm">
+                            <i class="fa-solid fa-play mr-1.5"></i> Begin Cycle
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tool 2: 5-4-3-2-1 Sensory Grounding Technique -->
+                <div class="glass-panel rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                                <i class="fa-solid fa-hand text-indigo-500"></i> 5-4-3-2-1 Grounding Method
+                            </h3>
+                            <span id="grounding-step-badge" class="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-medium">Step 1 of 5</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                            Bring your focus back to the present moment by engaging your 5 senses.
+                        </p>
+
+                        <!-- Grounding Interactive Step Container -->
+                        <div id="grounding-step-container" class="glass-card rounded-2xl p-4 border border-indigo-500/20 transition-all">
+                            <!-- Dynamic Step Content generated via JS -->
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3 mt-6">
+                        <button id="grounding-prev-btn" onclick="prevGroundingStep()" disabled class="px-4 py-2 rounded-xl glass-card text-xs font-medium text-slate-500 disabled:opacity-40 transition">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                        </button>
+                        <button id="grounding-next-btn" onclick="nextGroundingStep()" class="px-5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition shadow-sm">
+                            Next Sense <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Affirmations Generator Widget -->
+            <div class="glass-panel rounded-3xl p-6 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h3 class="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-sun text-amber-500"></i> Positive Affirmations Generator
+                        </h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Gentle reminders to anchor your self-worth and calm.</p>
+                    </div>
+                    <button onclick="generateAffirmation()" class="px-4 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 font-medium text-xs transition flex items-center gap-2 self-start sm:self-auto">
+                        <i class="fa-solid fa-rotate"></i> New Affirmation
+                    </button>
+                </div>
+
+                <div class="glass-card rounded-2xl p-6 text-center border border-amber-500/20 relative my-2">
+                    <i class="fa-solid fa-quote-left text-3xl text-amber-500/20 absolute top-3 left-4"></i>
+                    <p id="affirmation-text" class="text-base sm:text-lg font-medium text-slate-700 dark:text-slate-200 italic px-6 py-2">
+                        "I am grounded, capable, and allowed to take things one moment at a time."
+                    </p>
+                    <i class="fa-solid fa-quote-right text-3xl text-amber-500/20 absolute bottom-3 right-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW TAB 3: Gratitude Journal Section -->
+        <div id="tab-journal" class="tab-content hidden flex-1 space-y-6">
+            <div class="glass-panel rounded-3xl p-6 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h3 class="font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-lg">
+                            <i class="fa-solid fa-book-heart text-rose-500"></i> Daily Gratitude & Micro-Wins
+                        </h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Writing down three simple things can shift your focus toward comfort and light.</p>
+                    </div>
+                </div>
+
+                <!-- New Entry Form -->
+                <form onsubmit="saveJournalEntry(event)" class="space-y-4 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input type="text" id="gratitude-1" required placeholder="1. A small joy today (e.g. warm coffee)" class="w-full px-4 py-2.5 rounded-2xl glass-card text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 border border-slate-300/40 dark:border-slate-700">
+                        <input type="text" id="gratitude-2" placeholder="2. Someone or something you appreciated..." class="w-full px-4 py-2.5 rounded-2xl glass-card text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 border border-slate-300/40 dark:border-slate-700">
+                        <input type="text" id="gratitude-3" placeholder="3. A micro-win or accomplishment..." class="w-full px-4 py-2.5 rounded-2xl glass-card text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 border border-slate-300/40 dark:border-slate-700">
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-5 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs sm:text-sm transition shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-heart"></i> Save Gratitude Note
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Saved Entries List -->
+                <div class="border-t border-slate-200/60 dark:border-slate-800/60 pt-6">
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4">Saved Reflections</h4>
+                    <div id="journal-entries-list" class="space-y-3">
+                        <!-- Entries rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Settings & Personalization Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+        <div class="glass-panel w-full max-w-md rounded-3xl p-6 shadow-xl border border-white/20 dark:border-slate-700 space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="font-bold text-base text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-teal-500"></i> Personalization Settings
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm">
+                <div>
+                    <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Preferred Name / Nickname</label>
+                    <input type="text" id="setting-name" placeholder="e.g. Alex" class="w-full px-4 py-2.5 rounded-xl glass-card border border-slate-300/60 dark:border-slate-700 text-slate-800 dark:text-slate-100">
+                </div>
+
+                <div>
+                    <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Companion Voice Persona</label>
+                    <select id="setting-persona" class="w-full px-4 py-2.5 rounded-xl glass-card border border-slate-300/60 dark:border-slate-700 text-slate-800 dark:text-slate-100 bg-transparent">
+                        <option value="Warm & Gentle" class="dark:bg-dusk-900">Warm & Gentle (Empathetic, nurturing, soft)</option>
+                        <option value="Grounding & Direct" class="dark:bg-dusk-900">Grounding & Direct (Action-oriented, calm focus)</option>
+                        <option value="Wise & Reflective" class="dark:bg-dusk-900">Wise & Reflective (Thoughtful, mindfulness-focused)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-3 flex justify-end gap-2">
+                <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl glass-card text-slate-600 dark:text-slate-300 font-medium text-xs">Cancel</button>
+                <button onclick="saveSettings()" class="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs shadow-sm">Save Preferences</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application JavaScript Engine -->
+    <script>
+        // State Management
+        let appState = {
+            userName: localStorage.getItem('auracare_name') || 'Friend',
+            persona: localStorage.getItem('auracare_persona') || 'Warm & Gentle',
+            theme: localStorage.getItem('auracare_theme') || 'light',
+            currentMood: null,
+            chatHistory: [],
+            journalEntries: JSON.parse(localStorage.getItem('auracare_journal') || '[]'),
+            groundingStep: 0
+        };
+
+        // Grounding Technique Steps
+        const groundingSteps = [
+            { count: 5, sense: "Sight", icon: "fa-eye", text: "Acknowledge FIVE things you can see around you.", hint: "Look for subtle details: a pattern on the wall, light reflecting on a surface, or an object's color." },
+            { count: 4, sense: "Touch", icon: "fa-hand-pointer", text: "Acknowledge FOUR things you can physically feel right now.", hint: "Feel the texture of your shirt, the ground under your feet, or cool air on your skin." },
+            { count: 3, sense: "Sound", icon: "fa-ear-listen", text: "Acknowledge THREE things you can hear.", hint: "Listen for ambient noise: a distant car, humming appliances, or your own breathing." },
+            { count: 2, sense: "Smell", icon: "fa-wind", text: "Acknowledge TWO things you can smell.", hint: "Notice scents around you, or inhale gently near your sweater or a cup of tea." },
+            { count: 1, sense: "Taste", icon: "fa-utensils", text: "Acknowledge ONE thing you can taste.", hint: "Notice any lingering flavor in your mouth, or take a slow sip of water." }
+        ];
+
+        // Affirmation Database
+        const affirmations = [
+            "I am grounded, capable, and allowed to take things one moment at a time.",
+            "My feelings are valid, but they are temporary storms that will pass.",
+            "I don't have to figure everything out right now. Just this next breath is enough.",
+            "I treat myself with the same gentle kindness I offer to others.",
+            "I am safe in this present moment.",
+            "It is okay to pause, rest, and reset whenever I need to."
+        ];
+
+        // Initialize App on DOM Load
+        window.addEventListener('DOMContentLoaded', () => {
+            applyTheme(appState.theme);
+            document.getElementById('user-display-name').textContent = appState.userName;
+            document.getElementById('setting-name').value = appState.userName;
+            document.getElementById('setting-persona').value = appState.persona;
+            updatePersonaIndicator();
+
+            renderWelcomeChatMessage();
+            renderGroundingStep();
+            renderJournalEntries();
+        });
+
+        // Theme Control
+        function toggleTheme() {
+            appState.theme = appState.theme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('auracare_theme', appState.theme);
+            applyTheme(appState.theme);
+        }
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        // Navigation Tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            // Header Nav styling update
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = 'nav-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
+            });
+            document.getElementById(`nav-${tabId}`).className = 'nav-btn px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-xs';
+        }
+
+        // Settings Modal Control
+        function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+
+        function saveSettings() {
+            const newName = document.getElementById('setting-name').value.trim() || 'Friend';
+            const newPersona = document.getElementById('setting-persona').value;
+
+            appState.userName = newName;
+            appState.persona = newPersona;
+
+            localStorage.setItem('auracare_name', newName);
+            localStorage.setItem('auracare_persona', newPersona);
+
+            document.getElementById('user-display-name').textContent = newName;
+            updatePersonaIndicator();
+            closeSettingsModal();
+        }
+
+        function updatePersonaIndicator() {
+            document.getElementById('persona-indicator').textContent = `Tone: ${appState.persona}`;
+        }
+
+        // Mood Selection Handling
+        function selectMood(mood, emoji) {
+            appState.currentMood = mood;
+            const moodPrompt = `I am currently feeling ${mood.toLowerCase()} ${emoji}. Can you talk with me for a moment?`;
+            sendQuickPrompt(moodPrompt);
+        }
+
+        // Gemini API Chat Core
+        async function fetchGeminiResponse(userMessage) {
+            const apiKey = ""; // Canvas runtime environment automatically provides key
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemPrompt = `You are AuraCare, a compassionate, supportive, and empathetic AI Mental Health First-Aid Companion.
+User's Name: ${appState.userName}.
+Selected Communication Tone Persona: ${appState.persona}.
+
+CRITICAL GUIDELINES:
+1. You are NOT a medical doctor or licensed therapist. Do not diagnose, prescribe, or give medical advice.
+2. Maintain active listening, validating feelings gently without judgment.
+3. Keep responses warm, comforting, concise (2-3 paragraphs max), and easy to read during moments of distress.
+4. Offer immediate, gentle grounding techniques (e.g. 5-4-3-2-1 sensory awareness, box breathing) if the user feels anxious, overwhelmed, or panicked.
+5. If the user mentions self-harm, suicide, or crisis, immediately respond with deep compassion and remind them to contact emergency services or text HOME to 741741 / call 988.`;
+
+            // Prepare history format
+            const contents = appState.chatHistory.map(msg => ({
+                role: msg.role === 'user' ? 'user' : 'model',
+                parts: [{ text: msg.text }]
+            }));
+            
+            // Add current message
+            contents.push({
+                role: 'user',
+                parts: [{ text: userMessage }]
+            });
+
+            const payload = {
+                contents: contents,
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const aiReply = result.candidates?.[0]?.content?.parts?.[0]?.text || "I'm here with you. Take a slow breath. Could you repeat that for me?";
+                return aiReply;
+            } catch (err) {
+                console.error("Gemini Error:", err);
+                return "I'm having a brief connection pause, but I am still right here with you. Take a deep breath in... and out. Let's try again in a moment.";
+            }
+        }
+
+        // Chat UI Rendering & Event Listeners
+        function renderWelcomeChatMessage() {
+            const chatBox = document.getElementById('chat-messages');
+            chatBox.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-teal-500/20 text-teal-600 dark:text-teal-300 flex items-center justify-center shrink-0 text-xs">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <div class="glass-card p-3.5 rounded-2xl rounded-tl-none max-w-[85%] text-xs sm:text-sm text-slate-700 dark:text-slate-200 border border-teal-500/10">
+                        <p>Welcome, <strong>${appState.userName}</strong>. I'm AuraCare—your safe space to unwind, process your thoughts, or practice grounding exercises.</p>
+                        <p class="mt-2 text-slate-500 dark:text-slate-400 text-xs">How can I support your mental well-being today?</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const inputEl = document.getElementById('chat-input');
+            const message = inputEl.value.trim();
+            if (!message) return;
+
+            inputEl.value = '';
+            await processUserMessage(message);
+        }
+
+        function sendQuickPrompt(promptText) {
+            switchTab('chat');
+            processUserMessage(promptText);
+        }
+
+        async function processUserMessage(userText) {
+            const chatBox = document.getElementById('chat-messages');
+
+            // 1. Append User Message
+            appendMessageUI('user', userText);
+            appState.chatHistory.push({ role: 'user', text: userText });
+
+            // 2. Append Loading Indicator
+            const loadingId = 'loading-' + Date.now();
+            chatBox.insertAdjacentHTML('beforeend', `
+                <div id="${loadingId}" class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-full bg-teal-500/20 text-teal-600 dark:text-teal-300 flex items-center justify-center shrink-0 text-xs">
+                        <i class="fa-solid fa-sparkles"></i>
+                    </div>
+                    <div class="glass-card p-3.5 rounded-2xl rounded-tl-none text-xs sm:text-sm text-slate-400 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-notch fa-spin text-teal-500"></i> Aura is listening...
+                    </div>
+                </div>
+            `);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 3. Request Gemini API Response
+            const aiResponse = await fetchGeminiResponse(userText);
+
+            // 4. Remove Loading Indicator & Append AI Message
+            const loadingEl = document.getElementById(loadingId);
+            if (loadingEl) loadingEl.remove();
+
+            appendMessageUI('model', aiResponse);
+            appState.chatHistory.push({ role: 'model', text: aiResponse });
+        }
+
+        function appendMessageUI(role, text) {
+            const chatBox = document.getElementById('chat-messages');
+            const isUser = role === 'user';
+            
+            const messageHTML = `
+                <div class="flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}">
+                    <div class="w-8 h-8 rounded-full ${isUser ? 'bg-indigo-600 text-white' : 'bg-teal-500/20 text-teal-600 dark:text-teal-300'} flex items-center justify-center shrink-0 text-xs">
+                        <i class="fa-solid ${isUser ? 'fa-user' : 'fa-sparkles'}"></i>
+                    </div>
+                    <div class="glass-card p-3.5 rounded-2xl ${isUser ? 'rounded-tr-none bg-indigo-600/10 border-indigo-500/20' : 'rounded-tl-none border-teal-500/10'} max-w-[85%] text-xs sm:text-sm text-slate-800 dark:text-slate-100 whitespace-pre-wrap leading-relaxed">
+                        ${escapeHTML(text)}
+                    </div>
+                </div>
+            `;
+            chatBox.insertAdjacentHTML('beforeend', messageHTML);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function clearChatHistory() {
+            appState.chatHistory = [];
+            renderWelcomeChatMessage();
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        // TOOL 1: Box Breathing Timer Logic
+        let breathingActive = false;
+        let breathingTimer = null;
+        let breathPhaseIndex = 0; // 0: Inhale, 1: Hold, 2: Exhale, 3: Hold
+        let breathSecondsLeft = 4;
+
+        const phases = [
+            { name: "Inhale", scale: 1.15, text: "Breathe In Gently" },
+            { name: "Hold", scale: 1.15, text: "Hold Breath" },
+            { name: "Exhale", scale: 0.75, text: "Release Slowly" },
+            { name: "Hold", scale: 0.75, text: "Pause & Rest" }
+        ];
+
+        function toggleBoxBreathing() {
+            if (breathingActive) stopBreathing();
+            else startBreathing();
+        }
+
+        function toggleFullBreathing() {
+            toggleBoxBreathing();
+        }
+
+        function startBreathing() {
+            breathingActive = true;
+            document.getElementById('side-breath-btn').innerHTML = '<i class="fa-solid fa-pause text-xs"></i> Pause Rhythm';
+            document.getElementById('full-breath-btn').innerHTML = '<i class="fa-solid fa-pause mr-1.5"></i> Pause Cycle';
+            runBreathingStep();
+            breathingTimer = setInterval(runBreathingStep, 1000);
+        }
+
+        function stopBreathing() {
+            breathingActive = false;
+            clearInterval(breathingTimer);
+            document.getElementById('side-breath-btn').innerHTML = '<i class="fa-solid fa-play text-xs"></i> Resume Rhythm';
+            document.getElementById('full-breath-btn').innerHTML = '<i class="fa-solid fa-play mr-1.5"></i> Resume Cycle';
+        }
+
+        function runBreathingStep() {
+            if (!breathingActive) return;
+
+            const current = phases[breathPhaseIndex];
+            
+            // UI Updates for both side and full widgets
+            document.getElementById('side-breath-phase').textContent = current.name;
+            document.getElementById('side-breath-timer').textContent = `${breathSecondsLeft}s`;
+            document.getElementById('full-breath-phase').textContent = current.name;
+            document.getElementById('full-breath-count').textContent = breathSecondsLeft;
+
+            // Animate scale ring
+            const ring = document.getElementById('full-breath-ring');
+            const sideCircle = document.getElementById('side-breath-circle');
+            
+            if (ring) ring.style.transform = `scale(${current.scale})`;
+            if (sideCircle) sideCircle.style.transform = `scale(${current.scale === 1.15 ? 1.08 : 0.92})`;
+
+            breathSecondsLeft--;
+
+            if (breathSecondsLeft < 0) {
+                breathSecondsLeft = 4;
+                breathPhaseIndex = (breathPhaseIndex + 1) % phases.length;
+            }
+        }
+
+        // TOOL 2: 5-4-3-2-1 Sensory Grounding Technique Logic
+        function renderGroundingStep() {
+            const step = groundingSteps[appState.groundingStep];
+            document.getElementById('grounding-step-badge').textContent = `Step ${appState.groundingStep + 1} of 5`;
+
+            const container = document.getElementById('grounding-step-container');
+            container.innerHTML = `
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid ${step.icon}"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100">${step.count} Sensory Focus: ${step.sense}</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">${step.text}</p>
+                    </div>
+                </div>
+                <div class="bg-indigo-50 dark:bg-slate-800/80 p-3 rounded-xl text-xs text-indigo-900 dark:text-indigo-200 border border-indigo-200/50 dark:border-slate-700 mt-3">
+                    💡 <strong>Tip:</strong> ${step.hint}
+                </div>
+            `;
+
+            document.getElementById('grounding-prev-btn').disabled = appState.groundingStep === 0;
+            const nextBtn = document.getElementById('grounding-next-btn');
+            if (appState.groundingStep === groundingSteps.length - 1) {
+                nextBtn.innerHTML = 'Complete Exercise <i class="fa-solid fa-check ml-1"></i>';
+            } else {
+                nextBtn.innerHTML = 'Next Sense <i class="fa-solid fa-arrow-right ml-1"></i>';
+            }
+        }
+
+        function nextGroundingStep() {
+            if (appState.groundingStep < groundingSteps.length - 1) {
+                appState.groundingStep++;
+                renderGroundingStep();
+            } else {
+                // Completed
+                alert("Wonderful work! You have completed the 5-4-3-2-1 sensory grounding exercise.");
+                appState.groundingStep = 0;
+                renderGroundingStep();
+            }
+        }
+
+        function prevGroundingStep() {
+            if (appState.groundingStep > 0) {
+                appState.groundingStep--;
+                renderGroundingStep();
+            }
+        }
+
+        // TOOL 3: Affirmations Generator Logic
+        function generateAffirmation() {
+            const randomIndex = Math.floor(Math.random() * affirmations.length);
+            const textEl = document.getElementById('affirmation-text');
+            textEl.style.opacity = 0;
+            setTimeout(() => {
+                textEl.textContent = `"${affirmations[randomIndex]}"`;
+                textEl.style.opacity = 1;
+            }, 200);
+        }
+
+        // TOOL 4: Gratitude Journal Persistence Logic
+        function saveJournalEntry(e) {
+            e.preventDefault();
+            const g1 = document.getElementById('gratitude-1').value.trim();
+            const g2 = document.getElementById('gratitude-2').value.trim();
+            const g3 = document.getElementById('gratitude-3').value.trim();
+
+            if (!g1) return;
+
+            const entry = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                items: [g1, g2, g3].filter(Boolean)
+            };
+
+            appState.journalEntries.unshift(entry);
+            localStorage.setItem('auracare_journal', JSON.stringify(appState.journalEntries));
+
+            // Clear inputs
+            document.getElementById('gratitude-1').value = '';
+            document.getElementById('gratitude-2').value = '';
+            document.getElementById('gratitude-3').value = '';
+
+            renderJournalEntries();
+        }
+
+        function renderJournalEntries() {
+            const container = document.getElementById('journal-entries-list');
+            if (appState.journalEntries.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 italic">No reflections saved yet. Write down your first micro-win above!</p>`;
+                return;
+            }
+
+            container.innerHTML = appState.journalEntries.map(entry => `
+                <div class="glass-card rounded-2xl p-4 border border-slate-200/50 dark:border-slate-800 flex justify-between items-start gap-3">
+                    <div class="space-y-1">
+                        <span class="text-[11px] font-semibold text-rose-500 tracking-wide">${entry.date}</span>
+                        <ul class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 space-y-1 list-disc list-inside">
+                            ${entry.items.map(item => `<li>${escapeHTML(item)}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <button onclick="deleteJournalEntry(${entry.id})" class="text-slate-400 hover:text-rose-500 transition text-xs p-1" title="Delete entry">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function deleteJournalEntry(id) {
+            appState.journalEntries = appState.journalEntries.filter(item => item.id !== id);
+            localStorage.setItem('auracare_journal', JSON.stringify(appState.journalEntries));
+            renderJournalEntries();
+        }
+    </script>
+</body>
+</html>
+```
